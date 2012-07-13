@@ -37,13 +37,17 @@ Route::get('/', function()
 	return View::make('home.index');
 });
 
-Route::post('/', $action);
+Route::post('/', function()
+{
+	$redirect = Input::get('thwip');
+	return Redirect::to($redirect);	
+});
 
 Route::get('(:num)', function($code)
 {
-	$red = Thwip::find($code)->dest();
-
-	return Redirect::to($red->dest);
+	$thwip = Thwip::find($code);
+	$thwip->hits ++;
+	return Redirect::to($thwip->dest);
 });
 
 /*
