@@ -9,7 +9,19 @@ class Create_Users {
 	 */
 	public function up()
 	{
-		//
+		// create our users table
+		Schema::create('users', function($table) {
+			$table->increments('id');
+			$table->string('email', 128);
+			$table->string('password', 64);
+			$table->timestamps();
+		});
+
+		// insert a default user
+		DB::table('users')->insert(array(
+			'email'	=> 'admin@thekitchen.co',
+			'password'	=> '1812war')
+		));
 	}
 
 	/**
@@ -19,7 +31,7 @@ class Create_Users {
 	 */
 	public function down()
 	{
-		//
+		Schema::drop('users');
 	}
 
 }

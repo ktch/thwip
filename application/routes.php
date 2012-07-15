@@ -46,8 +46,61 @@ Route::post('/', function()
 Route::get('(:num)', function($code)
 {
 	$thwip = Thwip::find($code);
-	$thwip->hits ++;
+	$thwip->hits = $thwip->hits + 1;
+	$thwip->save();
 	return Redirect::to($thwip->dest);
+});
+
+Route::get('login', function() {
+	return View::make('account.login');
+});
+
+Route::post('login', function() {
+
+	// get the username and password from the POST
+	// data using the Input class
+	$username = Input::get('email');
+	$password = Input::get('password');
+
+	// call Auth::attempt() on the username and password
+	// to try to login, the session will be created
+	// automatically on success
+	if ( Auth::attempt($username, $password) )
+	{
+		// it worked, redirect to the admin route
+		return Redirect::to('account');
+	}
+	else
+	{
+		// login failed, show the form again and
+		// use the login_errors data to show that
+		// an error occured
+		return Redirect::to('login')
+			->with('login_errors', true);
+	}
+
+});
+
+Route::get('account', array('before' => 'auth', 'do' => function() {
+
+	// get the current user
+	$user = Auth::user();
+
+	// show the create post form, and send
+	// the current user to identify the post author
+	return View::make('account.index')->with('user', $user);
+
+}));
+
+Route::get('logout', function() {
+
+	// call the logout method to destroy
+	// the login session
+	Auth::logout();
+
+	// redirect back to the home page
+	return Redirect::to('/');
+
 });
 
 /*
@@ -120,5 +173,5 @@ Route::filter('csrf', function()
 
 Route::filter('auth', function()
 {
-	if (Auth::guest()) return Redirect::to('login');
+	if (Auth::guest()) return Redirect::to('/');
 });

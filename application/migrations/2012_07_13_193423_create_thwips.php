@@ -9,6 +9,7 @@ class Create_Thwips {
 	 */
 	public function up()
 	{
+		// create our thwips table
 		Schema::create('thwips', function($table) {
 			$table->increments('id');
 			$table->string('dest');
@@ -18,6 +19,7 @@ class Create_Thwips {
 			$table->timestamps();
 		});
 
+		// insert a default thwip 
 		DB::table('thwips')->insert(array(
 			'dest'	=> 'http://thekitchen.co',
 			'title'	=> 'the Kitchen',
